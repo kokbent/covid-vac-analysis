@@ -6,7 +6,7 @@ library(ggplot2)
 library(stringr)
 library(tidyr)
 
-con <- dbConnect(SQLite(), "data/covid_vac.sqlite")
+con <- dbConnect(SQLite(), "data/covid_vac_v1.1.sqlite")
 
 dbListTables(con)
 met <- dbGetQuery(con, "SELECT * FROM met")
@@ -20,25 +20,25 @@ head(dat)
 epi_curves0 <- dat %>%
   filter(vac == 0) %>%
   group_by(vac, vsd) %>%
-  summarise_at(vars(w00:w51), mean) %>%
+  summarise_at(vars(rc00:rc51), mean) %>%
   pivot_longer(-c(vac, vsd), 
                names_to = "week", values_to = "incd") 
 
 epi_curves0 <- mutate(epi_curves0, 
                       incd = incd / 31.27,
-                      week = as.numeric(str_remove(week, "w")))
+                      week = as.numeric(str_remove(week, "rc")))
 
 #### vac = 1
 epi_curves1 <- dat %>%
   filter(vac == 1) %>%
   group_by(vac, vac_eff, vac_cov, vsd) %>%
-  summarise_at(vars(w00:w51), mean) %>%
+  summarise_at(vars(rc00:rc51), mean) %>%
   pivot_longer(-c(vac, vac_eff, vac_cov, vsd), 
                names_to = "week", values_to = "incd")
 
 epi_curves1 <- mutate(epi_curves1,  
                       incd = incd / 31.27,
-                      week = as.numeric(str_remove(week, "w")))
+                      week = as.numeric(str_remove(week, "rc")))
 
 epi_curves_l <- split(epi_curves1, list(epi_curves1$vac_cov, epi_curves1$vsd))
 
