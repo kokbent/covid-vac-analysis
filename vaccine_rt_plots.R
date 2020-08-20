@@ -114,3 +114,5 @@ for (i in 1:length(rt_curves_l)) {
   
   dev.off()
 }
+
+dbDisconnect(con)

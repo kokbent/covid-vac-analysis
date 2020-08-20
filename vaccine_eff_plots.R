@@ -110,3 +110,5 @@ for (i in 1:length(epi_curves_l)) {
   
   dev.off()
 }
+
+dbDisconnect(con)
