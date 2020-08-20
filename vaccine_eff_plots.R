@@ -25,7 +25,7 @@ epi_curves0 <- dat %>%
                names_to = "week", values_to = "incd") 
 
 epi_curves0 <- mutate(epi_curves0, 
-                      incd = incd / 31.27,
+                      incd = incd,
                       week = as.numeric(str_remove(week, "rc")))
 
 #### vac = 1
@@ -37,7 +37,7 @@ epi_curves1 <- dat %>%
                names_to = "week", values_to = "incd")
 
 epi_curves1 <- mutate(epi_curves1,  
-                      incd = incd / 31.27,
+                      incd = incd,
                       week = as.numeric(str_remove(week, "rc")))
 
 epi_curves_l <- split(epi_curves1, list(epi_curves1$vac_cov, epi_curves1$vsd))
@@ -51,9 +51,11 @@ for (i in 1:length(epi_curves_l)) {
     mutate(effectiveness = 1 - (incd / incd_control))
 }
 
+#### Combinations
 vac_vsd_combi <- expand.grid(vac_cov = c(0.5, 0.7),
                              vsd = c(0, 0.2))
 
+#### Plot using for loop
 for (i in 1:length(epi_curves_l)) {
   outfile <- paste0("fig/eff_vac_cov_", vac_vsd_combi$vac_cov[i],
                     "_vsd_", vac_vsd_combi$vsd[i],

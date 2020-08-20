@@ -51,9 +51,11 @@ for (i in 1:length(rt_curves_l)) {
   }
 }
 
+#### Combinations
 vac_vsd_combi <- expand.grid(vac_cov = c(0.5, 0.7),
                              vsd = c(0, 0.2))
 
+#### Plot using for loop
 for (i in 1:length(rt_curves_l)) {
   outfile <- paste0("fig/Rt_vac_cov_", vac_vsd_combi$vac_cov[i],
                     "_vsd_", vac_vsd_combi$vsd[i],
@@ -73,7 +75,7 @@ for (i in 1:length(rt_curves_l)) {
        ylim = ylim,
        main = main, 
        xlab = "Week", 
-       ylab = "Weekly Incidence per 10k",
+       ylab = "Rt",
        col = "red",
        lwd = 2,
        axes = F)
