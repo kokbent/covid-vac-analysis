@@ -106,6 +106,8 @@ for (vac_day in vac_day_choice) {
   # sql <- paste0("SELECT vac, vac_eff, vac_cov, vsd, realization, serial FROM par 
   #               WHERE vac_day = ", vac_day)
   # par <- dbGetQuery(con, sql)
+  
+  # Comment this if vac_day is implemented
   par <- dbGetQuery(con, "SELECT vac, vac_eff, vac_cov, vsd, realization, serial FROM par")
   
   ## Joining table
