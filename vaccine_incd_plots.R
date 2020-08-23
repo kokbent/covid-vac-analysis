@@ -21,7 +21,7 @@ head(dat)
 epi_curves0 <- dat %>%
   filter(vac == 0) %>%
   group_by(vac, vsd) %>%
-  summarise_at(vars(rc00:rc51), mean) %>%
+  summarise_at(vars(rc00:rc65), mean) %>%
   pivot_longer(-c(vac, vsd), 
                names_to = "week", values_to = "incd") 
 
@@ -33,7 +33,7 @@ epi_curves0 <- mutate(epi_curves0,
 epi_curves1 <- dat %>%
   filter(vac == 1) %>%
   group_by(vac, vac_eff, vac_cov, vsd) %>%
-  summarise_at(vars(rc00:rc51), mean) %>%
+  summarise_at(vars(rc00:rc65), mean) %>%
   pivot_longer(-c(vac, vac_eff, vac_cov, vsd), 
                names_to = "week", values_to = "incd")
 
@@ -45,18 +45,18 @@ epi_curves_l <- split(epi_curves1, list(epi_curves1$vac_cov, epi_curves1$vsd))
 
 #### Insert corresponding vac = 0 grp into each combination of vac_cov, vsd
 for (i in 1:length(epi_curves_l)) {
-  if (unique(epi_curves_l[[i]]$vsd) == 0) {
-    epi_curves_l[[i]] <- bind_rows(epi_curves0[epi_curves0$vsd == 0,],
+  if (unique(epi_curves_l[[i]]$vsd) == 0.03) {
+    epi_curves_l[[i]] <- bind_rows(epi_curves0[epi_curves0$vsd == 0.03,],
                                    epi_curves_l[[i]])
   } else {
-    epi_curves_l[[i]] <- bind_rows(epi_curves0[epi_curves0$vsd == 0.2,],
+    epi_curves_l[[i]] <- bind_rows(epi_curves0[epi_curves0$vsd == 0.14,],
                                    epi_curves_l[[i]])
   }
 }
 
 #### Combinations
 vac_vsd_combi <- expand.grid(vac_cov = c(0.5, 0.7),
-                             vsd = c(0, 0.2))
+                             vsd = c(0.03, 0.14))
 
 #### Plot using for loop
 for (i in 1:length(epi_curves_l)) {
@@ -83,8 +83,8 @@ for (i in 1:length(epi_curves_l)) {
        lwd = 2,
        axes = F)
   axis(side = 1, 
-       at = 0:5 * 10, 
-       labels = (0:5 * 10 + 28) %% 52 + 1)
+       at = 0:6 * 10, 
+       labels = (0:6 * 10 + 7) %% 52 + 1)
   axis(side = 2)
   
   cond <- epc$vac == 1 & epc$vac_eff == 0.1

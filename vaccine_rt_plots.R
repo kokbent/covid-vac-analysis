@@ -20,7 +20,7 @@ head(dat)
 rt_curves0 <- dat %>%
   filter(vac == 0) %>%
   group_by(vac, vsd) %>%
-  summarise_at(vars(Rt00:Rt51), mean) %>%
+  summarise_at(vars(Rt00:Rt65), mean) %>%
   pivot_longer(-c(vac, vsd), 
                names_to = "week", values_to = "Rt") 
 
@@ -31,7 +31,7 @@ rt_curves0 <- mutate(rt_curves0,
 rt_curves1 <- dat %>%
   filter(vac == 1) %>%
   group_by(vac, vac_eff, vac_cov, vsd) %>%
-  summarise_at(vars(Rt00:Rt51), mean) %>%
+  summarise_at(vars(Rt00:Rt65), mean) %>%
   pivot_longer(-c(vac, vac_eff, vac_cov, vsd), 
                names_to = "week", values_to = "Rt")
 
@@ -42,18 +42,18 @@ rt_curves_l <- split(rt_curves1, list(rt_curves1$vac_cov, rt_curves1$vsd))
 
 #### Insert corresponding vac = 0 grp into each combination of vac_cov, vsd
 for (i in 1:length(rt_curves_l)) {
-  if (unique(rt_curves_l[[i]]$vsd) == 0) {
-    rt_curves_l[[i]] <- bind_rows(rt_curves0[rt_curves0$vsd == 0,],
+  if (unique(rt_curves_l[[i]]$vsd) == 0.03) {
+    rt_curves_l[[i]] <- bind_rows(rt_curves0[rt_curves0$vsd == 0.03,],
                                    rt_curves_l[[i]])
   } else {
-    rt_curves_l[[i]] <- bind_rows(rt_curves0[rt_curves0$vsd == 0.2,],
+    rt_curves_l[[i]] <- bind_rows(rt_curves0[rt_curves0$vsd == 0.14,],
                                    rt_curves_l[[i]])
   }
 }
 
 #### Combinations
 vac_vsd_combi <- expand.grid(vac_cov = c(0.5, 0.7),
-                             vsd = c(0, 0.2))
+                             vsd = c(0.03, 0.14))
 
 #### Plot using for loop
 for (i in 1:length(rt_curves_l)) {
@@ -80,8 +80,8 @@ for (i in 1:length(rt_curves_l)) {
        lwd = 2,
        axes = F)
   axis(side = 1, 
-       at = 0:5 * 10, 
-       labels = (0:5 * 10 + 28) %% 52 + 1)
+       at = 0:6 * 10, 
+       labels = (0:6 * 10 + 7) %% 52 + 1)
   axis(side = 2)
   
   cond <- rtc$vac == 1 & rtc$vac_eff == 0.1
