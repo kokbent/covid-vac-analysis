@@ -9,9 +9,9 @@ library(lubridate)
 
 #### Initialization and Database ----
 totalpop_10k <- 31.27 # Adjust accordingly
-# vac_day_choice <- 0:2 # Uncomment this when vac_day is implemented
-vac_day_choice <- 2 # Comment this when vac_day is implemented
-con <- dbConnect(SQLite(), "data/covid_vac_v1.1.sqlite")
+vac_day_choice <- 0:2 # Uncomment this when vac_day is implemented
+# vac_day_choice <- 1 # Comment this when vac_day is implemented
+con <- dbConnect(SQLite(), "data/covid_vac_v1.2.sqlite")
 dbListTables(con)
 met <- dbGetQuery(con, "SELECT * FROM met")
 
@@ -103,12 +103,12 @@ make_title <- function (vac_day, vac_cov, vsd) {
 #### Looping through vac_day ----
 for (vac_day in vac_day_choice) {
   # Uncomment this if vac_day is implemented
-  # sql <- paste0("SELECT vac, vac_eff, vac_cov, vsd, realization, serial FROM par 
-  #               WHERE vac_day = ", vac_day)
-  # par <- dbGetQuery(con, sql)
+  sql <- paste0("SELECT vac, vac_eff, vac_cov, vsd, realization, serial FROM par
+                WHERE vac_day = ", vac_day)
+  par <- dbGetQuery(con, sql)
   
   # Comment this if vac_day is implemented
-  par <- dbGetQuery(con, "SELECT vac, vac_eff, vac_cov, vsd, realization, serial FROM par")
+  # par <- dbGetQuery(con, "SELECT vac, vac_eff, vac_cov, vsd, realization, serial FROM par")
   
   ## Joining table
   dat <- par %>%
