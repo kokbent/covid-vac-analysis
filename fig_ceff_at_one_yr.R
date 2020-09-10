@@ -58,7 +58,7 @@ qs.dt <- oneyear[,{
   as.list(qs)
 }, keyby = c("vac_eff","vac_cov","vac_mech","vac_day","vsd")]
 
-ggplot(qs.dt) +
+p <- ggplot(qs.dt) +
   aes(x=vac_eff, color = factor(vac_cov), fill = factor(vac_cov), group = vac_cov) +
   facet_grid(vsd ~ vac_day, labeller = labeller(
     vsd = function(v) sprintf("VSD = %s",v),
@@ -85,5 +85,5 @@ save_plot(
   p,
   ncol = qs.dt[, length(unique(vac_day))],
   nrow = qs.dt[, length(unique(vsd))],
-  base_height = 2, base_asp = 2
+  base_height = 2, base_asp = 1.5
 )
