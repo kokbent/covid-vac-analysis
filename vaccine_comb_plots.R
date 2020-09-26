@@ -9,11 +9,11 @@ library(lubridate)
 
 #### Initialization and Database ----
 totalpop_10k <- 31.27 # Adjust accordingly
-vac_day_choice <- 0:2 # Uncomment this when vac_day is implemented
-# vac_day_choice <- 1 # Comment this when vac_day is implemented
-con <- dbConnect(SQLite(), "data/covid_vac_v1.2.sqlite")
+con <- dbConnect(SQLite(), "data/covid_vac_v2.0.sqlite")
 dbListTables(con)
 met <- dbGetQuery(con, "SELECT * FROM met")
+vac_day_choice <- dbGetQuery(con, "SELECT DISTINCT vac_day FROM par")$vac_day
+vac_day_choice <- sort(vac_day_choice)
 
 
 #### Functions ----
@@ -33,48 +33,56 @@ summ_pivot_tidy <- function (df) {
   return(df1)
 }
 
+pal <- viridis::viridis(5, begin = 0, end = 0.95)
+pal <- c("#000000FF", "#440154FF", "#3C4F8AFF", 
+         "#238A8DFF", "#49C16DFF", "#C8CB15FF")
+
 plot_curves <- function (epc, param, legend = F, hline = NULL, ...) {
   
   flag <- ifelse(param == "effectiveness", "n", "l")
-  epc$Rt[epc$week == max(epc$week)] <- NA
+  epc$Rt[epc$week > max(epc$week) - 1] <- NA
   
   cond <- epc$vac == 0
   plot(epc[cond, c("week", param)], 
        type = flag,
-       col = "red",
+       col = pal[1],
        lwd = 2,
        axes = F, ...)
   axis(side = 1, 
        at = 0:6 * 10, 
-       labels = (0:6 * 10 + 7) %% 52 + 1)
+       labels = (0:6 * 10) + 1)
   axis(side = 2)
   
   cond <- epc$vac == 1 & epc$vac_eff == 0.1
   lines(epc[cond, c("week", param)],
-        col = "darkgoldenrod4",
+        col = pal[2],
         lwd = 2)
   
   cond <- epc$vac == 1 & epc$vac_eff == 0.3
   lines(epc[cond, c("week", param)],
-        col = "cyan4",
+        col = pal[3],
         lwd = 2)
   
   cond <- epc$vac == 1 & epc$vac_eff == 0.5
   lines(epc[cond, c("week", param)],
-        col = "dodgerblue4",
+        col = pal[4],
         lwd = 2)
   
   cond <- epc$vac == 1 & epc$vac_eff == 0.7
   lines(epc[cond, c("week", param)],
-        col = "darkblue",
+        col = pal[5],
+        lwd = 2)
+  
+  cond <- epc$vac == 1 & epc$vac_eff == 0.9
+  lines(epc[cond, c("week", param)],
+        col = pal[6],
         lwd = 2)
   
   if (legend) {
     legend("topright",
            legend = c("No Vaccine", "10% Efficacy", "30% Efficacy", 
-                      "50% Efficacy", "70% Efficacy"),
-           col = c("red", "darkgoldenrod4", "cyan4",
-                   "dodgerblue4", "darkblue"),
+                      "50% Efficacy", "70% Efficacy", "90% Efficacy"),
+           col = pal,
            lty = 1,
            lwd = 2,
            bty = "n",
@@ -85,16 +93,9 @@ plot_curves <- function (epc, param, legend = F, hline = NULL, ...) {
 }
 
 make_title <- function (vac_day, vac_cov, vsd) {
-  dte <- ymd("2020-01-01")
-  yday(dte) <- case_when(
-    vac_day == 0 ~ 56,
-    vac_day == 1 ~ 140,
-    vac_day == 2 ~ 200,
-  )
-  
-  main1 <- paste0("Vaccination at ", dte)
+  main1 <- paste0("Vaccination at day ", vac_day, " after introduction")
   main2 <- paste0("Vaccine coverage ", vac_cov * 100,
-                  "%, Social Distancing ", vsd * 100, "%")
+                  "%, Social distancing ", vsd * 100, "%")
   
   return(paste0(main1, "\n", main2))
 }
@@ -186,7 +187,7 @@ for (vac_day in vac_day_choice) {
     
     main <- make_title(vac_day, vac_cov, vsd)
     
-    mtext("Week", 1, 1, outer = T)
+    mtext("Week after first introduction", 1, 1, outer = T)
     mtext(main, 3, 0, outer = T)
     
     dev.off()
