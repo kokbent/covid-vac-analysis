@@ -40,7 +40,9 @@ pal <- c("#000000FF", "#440154FF", "#3C4F8AFF",
 plot_curves <- function (epc, param, legend = F, hline = NULL, ...) {
   
   flag <- ifelse(param == "effectiveness", "n", "l")
-  epc$Rt[epc$week > max(epc$week) - 1] <- NA
+  ## Remove last week's Rt values (misleading)
+  ## Obsolete?
+  # epc$Rt[epc$week > max(epc$week) - 1] <- NA
   
   cond <- epc$vac == 0
   plot(epc[cond, c("week", param)], 
