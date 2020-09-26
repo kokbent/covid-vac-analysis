@@ -24,10 +24,7 @@ VC_L = (1/.7)*(1 - (1/R))
 VC_U = (1/.9)*(1 - (1/R))
 Tmp9 <- data.frame(R,VC_L,VC_U) %>% mutate(VE="90%")
 
-F1 <- rbind(Tmp1, Tmp3) 
-F1 <- rbind(F1, Tmp5)
-F1 <- rbind(F1, Tmp7)
-F1 <- rbind(F1, Tmp9)
+F1 <- bind_rows(Tmp1, Tmp3, Tmp5, Tmp7, Tmp9)
 F1 <- mutate(F1, VC_L=ifelse(VC_L>1,1,VC_L))
 
 png('fig/vac_crit.png', 5.2, 4, unit='in', res=360)
