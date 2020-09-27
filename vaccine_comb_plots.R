@@ -11,6 +11,8 @@ library(lubridate)
 totalpop_10k <- 31.27 # Adjust accordingly
 max_week <- 52 # Adjust accordingly, start counting from 1
 con <- dbConnect(SQLite(), "data/covid_vac_v2.0.sqlite")
+pal <- c("#000000FF", "#440154FF", "#3C4F8AFF", 
+         "#238A8DFF", "#49C16DFF", "#C8CB15FF")
 
 dbListTables(con)
 met <- dbGetQuery(con, "SELECT * FROM met")
@@ -28,10 +30,6 @@ calc_eff <- function (incd, incd_control, start_wk) {
     (1 - cumsum(incd[start_wk:Nweek]) / cumsum(incd_control[start_wk:Nweek]))
   return(eff2)
 }
-
-# pal <- viridis::viridis(5, begin = 0, end = 0.95)
-pal <- c("#000000FF", "#440154FF", "#3C4F8AFF", 
-         "#238A8DFF", "#49C16DFF", "#C8CB15FF")
 
 plot_curves <- function (epc, param, legend = F, hline = NULL, ...) {
   
