@@ -118,21 +118,21 @@ plot_all <- function (epc, pvl, ylims) {
               xlim = c(0, max_week - 1),
               ylim = c(0, ylims[2,"incd"]), 
               main = "")
-  plot_curves(epc, param = "Eff1", 
-              pvl = pvl,
-              legend = F, hline = 0, 
-              xlab = "",
-              ylab = "Cumu. effectiveness 1", 
-              xlim = c(0, max_week - 1),
-              ylim = range(ylims[,c("Eff1", "Eff2")]), 
-              main = "")
+  # plot_curves(epc, param = "Eff1", 
+  #             pvl = pvl,
+  #             legend = F, hline = 0, 
+  #             xlab = "",
+  #             ylab = "Cumu. effectiveness 1", 
+  #             xlim = c(0, max_week - 1),
+  #             ylim = range(ylims[,c("Eff1", "Eff2")]), 
+  #             main = "")
   plot_curves(epc, param = "Eff2", 
               pvl = pvl,
               legend = F, hline = 0, 
               xlab = "",
-              ylab = "Cumu. effectiveness 2", 
+              ylab = "Cumu. effectiveness", 
               xlim = c(0, max_week - 1),
-              ylim = range(ylims[,c("Eff1", "Eff2")]), 
+              ylim = range(ylims[,c("Eff2")]), 
               main = "")
   plot_curves(epc, param = "case_avert", 
               pvl = pvl,
@@ -202,6 +202,7 @@ for (vac_day in vac_day_choice) {
     ## Read from sqlite
     sql <- paste0("SELECT vac, vac_eff, vac_cov, vsd, realization, serial FROM par
                 WHERE vac_day = ", vac_day, " AND pvl = ", pvl)
+
     par <- dbGetQuery(con, sql)
     if (nrow(par) == 0) next
     
@@ -256,10 +257,10 @@ for (j in 1:length(epi_longs)) {
                       ".png")
     
     ## Plot start
-    png(outfile, width = 15, height = 21, units = "cm",
-        res = 200)
+    png(outfile, width = 15, height = 17, units = "cm",
+        res = 300)
     
-    par(mfrow = c(5, 1),
+    par(mfrow = c(4, 1),
         mar = c(2, 4, 1, 1),
         oma = c(3, 0, 3, 0))
     
